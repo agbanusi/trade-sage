@@ -89,6 +89,42 @@ export const generatePricePoints = (count: number, volatility: number): PricePoi
   return points;
 };
 
+/**
+ * Generates mock price data for a trading pair
+ * @param startPrice Starting price
+ * @param volatility Price volatility (standard deviation)
+ * @param numPoints Number of data points to generate
+ * @param trend 'up', 'down', or 'sideways' trend
+ * @returns Array of price points
+ */
+export const generateMockPriceData = (
+  startPrice: number, 
+  volatility: number, 
+  numPoints: number = 60,
+  trend: 'up' | 'down' | 'sideways' = 'sideways'
+): PricePoint[] => {
+  const points: PricePoint[] = [];
+  let price = startPrice;
+  const now = Date.now();
+  
+  // Trend factor influences the direction of price movement
+  const trendFactor = trend === 'up' ? 0.6 : trend === 'down' ? -0.6 : 0;
+  
+  for (let i = 0; i < numPoints; i++) {
+    // Random change with trend bias
+    const randomFactor = (Math.random() - 0.5);
+    const change = (randomFactor + trendFactor) * volatility;
+    
+    price = Math.max(0.00001, price + change);
+    points.push({
+      timestamp: now - (numPoints - i) * 60000, // minute points going back from now
+      price
+    });
+  }
+  
+  return points;
+};
+
 // Mock trading signals
 export const mockTradingSignals: TradingSignal[] = [
   {
