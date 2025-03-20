@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -167,13 +166,8 @@ export const AdvancedAnalyticsWidget: React.FC<AdvancedAnalyticsWidgetProps> = (
                   />
                   <Bar 
                     dataKey="accuracy" 
-                    fill={(entry) => {
-                      const value = entry.accuracy;
-                      if (value >= 80) return "#10b981";
-                      if (value >= 70) return "#8b5cf6";
-                      return "#f59e0b";
-                    }}
-                    barSize={20} 
+                    fill="#8b5cf6"
+                    className="fill-current text-purple-500"
                   />
                 </BarChart>
               </ResponsiveContainer>

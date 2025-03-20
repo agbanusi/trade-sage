@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -20,7 +19,6 @@ const TradingPairAnalysis = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading data
     const timer = setTimeout(() => {
       const signals = mockTradingSignals.filter(signal => signal.pairId === pairId);
       if (signals.length > 0) {
@@ -137,7 +135,7 @@ const TradingPairAnalysis = () => {
         </TabsList>
         
         <TabsContent value="patterns" className="space-y-6">
-          <TradingPatternAnalysis symbol={selectedSignal.symbol} timeframe={selectedTimeframe} />
+          <TradingPatternAnalysis />
         </TabsContent>
         
         <TabsContent value="indicators" className="space-y-6">
@@ -197,7 +195,6 @@ const IndicatorAnalysis: React.FC<IndicatorAnalysisProps> = ({
   indicators,
   type 
 }) => {
-  // Get a title based on the type
   const getTitle = () => {
     switch (type) {
       case 'momentum': return 'Momentum Indicators';
@@ -207,7 +204,6 @@ const IndicatorAnalysis: React.FC<IndicatorAnalysisProps> = ({
     }
   };
   
-  // Filter indicators based on their type (simplified for demo)
   const filteredIndicators = indicators.filter((_, index) => {
     if (type === 'momentum') return index % 4 === 0;
     if (type === 'trend') return index % 4 === 1;
