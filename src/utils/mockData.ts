@@ -1,228 +1,246 @@
 
-import { TradingPair, PricePoint, TradingSignal, IndicatorSettings } from '../types';
+import { TradingPair, PricePoint, TradingSignal, TimeFrame, IndicatorSettings } from '@/types';
 
 // Mock trading pairs
 export const mockTradingPairs: TradingPair[] = [
   {
-    id: 'xauusd',
-    symbol: 'XAU/USD',
-    name: 'Gold',
-    price: 2024.75,
-    change: 12.50,
-    changePercent: 0.62,
-    high24h: 2030.15,
-    low24h: 2010.30,
-    volume24h: 156487,
-  },
-  {
-    id: 'xagusd',
-    symbol: 'XAG/USD',
-    name: 'Silver',
-    price: 23.15,
-    change: -0.28,
-    changePercent: -1.20,
-    high24h: 23.55,
-    low24h: 22.96,
-    volume24h: 89542,
-  },
-  {
-    id: 'eurusd',
-    symbol: 'EUR/USD',
+    id: '1',
+    symbol: 'EURUSD',
     name: 'Euro / US Dollar',
-    price: 1.0785,
+    price: 1.0876,
     change: 0.0023,
     changePercent: 0.21,
-    high24h: 1.0802,
-    low24h: 1.0755,
-    volume24h: 245689,
-  },
-  {
-    id: 'gbpusd',
-    symbol: 'GBP/USD',
-    name: 'British Pound / US Dollar',
-    price: 1.2650,
-    change: -0.0045,
-    changePercent: -0.35,
-    high24h: 1.2705,
-    low24h: 1.2635,
-    volume24h: 187456,
-  },
-  {
-    id: 'usdjpy',
-    symbol: 'USD/JPY',
-    name: 'US Dollar / Japanese Yen',
-    price: 155.75,
-    change: 0.45,
-    changePercent: 0.29,
-    high24h: 156.10,
-    low24h: 154.95,
-    volume24h: 201542,
-  },
-  {
-    id: 'usdchf',
-    symbol: 'USD/CHF',
-    name: 'US Dollar / Swiss Franc',
-    price: 0.9050,
-    change: 0.0025,
-    changePercent: 0.28,
-    high24h: 0.9075,
-    low24h: 0.9015,
-    volume24h: 134567,
-  },
-];
-
-// Function to generate mock price data
-export const generateMockPriceData = (
-  basePrice: number,
-  volatility: number,
-  dataPoints: number,
-  trend: 'up' | 'down' | 'sideways' = 'sideways'
-): PricePoint[] => {
-  const now = Date.now();
-  const data: PricePoint[] = [];
-  
-  let price = basePrice;
-  let trendFactor = trend === 'up' ? 0.0002 : trend === 'down' ? -0.0002 : 0;
-  
-  for (let i = 0; i < dataPoints; i++) {
-    // Random walk with slight trend bias
-    const change = (Math.random() - 0.5) * volatility + (price * trendFactor);
-    price += change;
-    
-    // Ensure price doesn't go negative
-    price = Math.max(price, 0.001);
-    
-    data.push({
-      timestamp: now - (dataPoints - i) * 60000, // 1 minute intervals
-      price,
-    });
-  }
-  
-  return data;
-};
-
-// Generate mock trading signals
-export const mockTradingSignals: TradingSignal[] = [
-  {
-    id: '1',
-    pairId: 'xauusd',
-    symbol: 'XAU/USD',
-    type: 'BUY',
-    confidence: 87,
-    entryPrice: 2024.75,
-    stopLoss: 2020.00,
-    takeProfit: 2035.50,
-    timeframe: '1h',
-    timestamp: Date.now() - 15 * 60000, // 15 minutes ago
-    indicators: [
-      { name: 'RSI', value: '28', signal: 'BUY' },
-      { name: 'MACD', value: 'Crossing Up', signal: 'BUY' },
-      { name: 'MA Cross', value: '50/200 SMA Bullish', signal: 'BUY' },
-      { name: 'Bollinger Bands', value: 'Lower Band Touch', signal: 'BUY' },
-    ],
+    high24h: 1.0901,
+    low24h: 1.0845,
+    volume24h: 98765432
   },
   {
     id: '2',
-    pairId: 'usdjpy',
-    symbol: 'USD/JPY',
-    type: 'SELL',
-    confidence: 75,
-    entryPrice: 155.75,
-    stopLoss: 156.25,
-    takeProfit: 154.50,
-    timeframe: '15m',
-    timestamp: Date.now() - 8 * 60000, // 8 minutes ago
-    indicators: [
-      { name: 'RSI', value: '74', signal: 'SELL' },
-      { name: 'MACD', value: 'Crossing Down', signal: 'SELL' },
-      { name: 'MA Cross', value: 'Negative', signal: 'NEUTRAL' },
-      { name: 'Bollinger Bands', value: 'Upper Band Touch', signal: 'SELL' },
-    ],
+    symbol: 'GBPUSD',
+    name: 'British Pound / US Dollar',
+    price: 1.2654,
+    change: -0.0031,
+    changePercent: -0.24,
+    high24h: 1.2698,
+    low24h: 1.2623,
+    volume24h: 76543210
   },
   {
     id: '3',
-    pairId: 'eurusd',
-    symbol: 'EUR/USD',
+    symbol: 'USDJPY',
+    name: 'US Dollar / Japanese Yen',
+    price: 149.87,
+    change: 0.76,
+    changePercent: 0.51,
+    high24h: 150.23,
+    low24h: 149.11,
+    volume24h: 87654321
+  },
+  {
+    id: '4',
+    symbol: 'XAUUSD',
+    name: 'Gold / US Dollar',
+    price: 2354.12,
+    change: 12.35,
+    changePercent: 0.53,
+    high24h: 2362.40,
+    low24h: 2341.20,
+    volume24h: 54321098
+  },
+  {
+    id: '5',
+    symbol: 'BTCUSD',
+    name: 'Bitcoin / US Dollar',
+    price: 68432.51,
+    change: -1245.32,
+    changePercent: -1.79,
+    high24h: 69876.54,
+    low24h: 67998.32,
+    volume24h: 32109876
+  },
+  {
+    id: '6',
+    symbol: 'USDCHF',
+    name: 'US Dollar / Swiss Franc',
+    price: 0.9076,
+    change: -0.0018,
+    changePercent: -0.20,
+    high24h: 0.9102,
+    low24h: 0.9058,
+    volume24h: 43210987
+  }
+];
+
+// Mock price points for charts
+export const generatePricePoints = (count: number, volatility: number): PricePoint[] => {
+  const points: PricePoint[] = [];
+  let price = 100;
+  const now = Date.now();
+  
+  for (let i = 0; i < count; i++) {
+    const change = (Math.random() - 0.5) * volatility;
+    price = Math.max(50, price + change);
+    points.push({
+      timestamp: now - (count - i) * 3600000, // hourly points going back from now
+      price
+    });
+  }
+  
+  return points;
+};
+
+// Mock trading signals
+export const mockTradingSignals: TradingSignal[] = [
+  {
+    id: '1',
+    pairId: '1',
+    symbol: 'EURUSD',
     type: 'BUY',
-    confidence: 68,
-    entryPrice: 1.0785,
-    stopLoss: 1.0770,
-    takeProfit: 1.0820,
-    timeframe: '5m',
-    timestamp: Date.now() - 4 * 60000, // 4 minutes ago
+    confidence: 0.78,
+    entryPrice: 1.0865,
+    stopLoss: 1.0820,
+    takeProfit: 1.0940,
+    timeframe: '1h',
+    timestamp: Date.now() - 1800000, // 30 minutes ago
     indicators: [
       { name: 'RSI', value: '32', signal: 'BUY' },
-      { name: 'MACD', value: 'Bullish Divergence', signal: 'BUY' },
-      { name: 'MA Cross', value: 'Positive', signal: 'BUY' },
-      { name: 'Bollinger Bands', value: 'Middle', signal: 'NEUTRAL' },
-    ],
+      { name: 'MACD', value: 'Bullish Crossover', signal: 'BUY' },
+      { name: 'SMA50/200', value: 'Bullish', signal: 'BUY' }
+    ]
   },
+  {
+    id: '2',
+    pairId: '2',
+    symbol: 'GBPUSD',
+    type: 'SELL',
+    confidence: 0.65,
+    entryPrice: 1.2670,
+    stopLoss: 1.2710,
+    takeProfit: 1.2580,
+    timeframe: '4h',
+    timestamp: Date.now() - 7200000, // 2 hours ago
+    indicators: [
+      { name: 'RSI', value: '78', signal: 'SELL' },
+      { name: 'MACD', value: 'Bearish Divergence', signal: 'SELL' },
+      { name: 'Bollinger', value: 'Upper Band Touched', signal: 'SELL' }
+    ]
+  },
+  {
+    id: '3',
+    pairId: '3',
+    symbol: 'USDJPY',
+    type: 'BUY',
+    confidence: 0.82,
+    entryPrice: 149.65,
+    stopLoss: 149.20,
+    takeProfit: 150.50,
+    timeframe: '1d',
+    timestamp: Date.now() - 43200000, // 12 hours ago
+    indicators: [
+      { name: 'Ichimoku', value: 'Cloud Breakout', signal: 'BUY' },
+      { name: 'MACD', value: 'Bullish', signal: 'BUY' },
+      { name: 'Volume', value: 'Increasing', signal: 'BUY' }
+    ]
+  },
+  {
+    id: '4',
+    pairId: '4',
+    symbol: 'XAUUSD',
+    type: 'NEUTRAL',
+    confidence: 0.55,
+    entryPrice: 2350.00,
+    stopLoss: 2330.00,
+    takeProfit: 2375.00,
+    timeframe: '4h',
+    timestamp: Date.now() - 14400000, // 4 hours ago
+    indicators: [
+      { name: 'RSI', value: '54', signal: 'NEUTRAL' },
+      { name: 'MA', value: 'Sideways', signal: 'NEUTRAL' },
+      { name: 'ATR', value: 'Low Volatility', signal: 'NEUTRAL' }
+    ]
+  },
+  {
+    id: '5',
+    pairId: '5',
+    symbol: 'BTCUSD',
+    type: 'SELL',
+    confidence: 0.72,
+    entryPrice: 68900.00,
+    stopLoss: 69500.00,
+    takeProfit: 67500.00,
+    timeframe: '1h',
+    timestamp: Date.now() - 3600000, // 1 hour ago
+    indicators: [
+      { name: 'RSI', value: '72', signal: 'SELL' },
+      { name: 'Volume', value: 'Declining', signal: 'SELL' },
+      { name: 'MA', value: 'Resistance Test', signal: 'SELL' }
+    ]
+  }
 ];
 
 // Default indicator settings
 export const defaultIndicatorSettings: IndicatorSettings[] = [
   {
-    id: 'rsi',
+    id: '1',
     name: 'Relative Strength Index (RSI)',
     enabled: true,
     parameters: {
       period: 14,
       overbought: 70,
-      oversold: 30,
+      oversold: 30
     },
-    weight: 1,
+    weight: 0.8
   },
   {
-    id: 'macd',
+    id: '2',
     name: 'Moving Average Convergence Divergence (MACD)',
     enabled: true,
     parameters: {
       fastPeriod: 12,
       slowPeriod: 26,
-      signalPeriod: 9,
+      signalPeriod: 9
     },
-    weight: 1,
+    weight: 0.7
   },
   {
-    id: 'ma',
-    name: 'Moving Average Crossover',
-    enabled: true,
-    parameters: {
-      fastPeriod: 50,
-      slowPeriod: 200,
-      type: 'SMA',
-    },
-    weight: 1,
-  },
-  {
-    id: 'bb',
+    id: '3',
     name: 'Bollinger Bands',
     enabled: true,
     parameters: {
       period: 20,
-      standardDeviations: 2,
+      deviations: 2,
+      maType: 'SMA'
     },
-    weight: 1,
+    weight: 0.6
   },
   {
-    id: 'fib',
-    name: 'Fibonacci Retracement',
+    id: '4',
+    name: 'Ichimoku Cloud',
     enabled: false,
     parameters: {
-      useAutoHighLow: true,
-      levels: [0.236, 0.382, 0.5, 0.618, 0.786],
+      conversionPeriod: 9,
+      basePeriod: 26,
+      spanPeriod: 52,
+      displacement: 26
     },
-    weight: 0.8,
+    weight: 0.5
   },
   {
-    id: 'stoch',
+    id: '5',
     name: 'Stochastic Oscillator',
     enabled: false,
     parameters: {
       kPeriod: 14,
       dPeriod: 3,
-      slowing: 3,
+      slowing: 3
     },
-    weight: 0.7,
-  },
+    weight: 0.6
+  }
 ];
+
+// Mock chart data - fixed values used across the app
+export const mockChartData = {
+  priceHistory: generatePricePoints(24, 2),
+  supportLevels: [95.5, 97.8],
+  resistanceLevels: [102.3, 104.7]
+};

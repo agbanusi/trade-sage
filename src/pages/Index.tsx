@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import MarketOverview from '@/components/MarketOverview';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   return (
@@ -15,17 +17,19 @@ const Index = () => {
         </div>
         <div className="flex items-center gap-4">
           <nav className="hidden md:flex gap-6">
-            <a href="#" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Dashboard</a>
-            <a href="#" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Markets</a>
+            <Link to="/" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Home</Link>
+            <Link to="/dashboard" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Dashboard</Link>
             <a href="#" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Signals</a>
             <a href="#" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Settings</a>
           </nav>
-          <button className={cn(
-            "bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-full text-sm font-medium transition-all",
-            "border border-primary/20",
-          )}>
-            Connect API
-          </button>
+          <Link to="/dashboard">
+            <Button className={cn(
+              "bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-full text-sm font-medium transition-all",
+              "border border-primary/20",
+            )}>
+              Go to Dashboard
+            </Button>
+          </Link>
         </div>
       </header>
       
@@ -40,6 +44,14 @@ const Index = () => {
         </div>
         
         <MarketOverview />
+        
+        <div className="mt-12 text-center">
+          <Link to="/dashboard">
+            <Button size="lg" className="animate-pulse">
+              Explore Advanced Dashboard
+            </Button>
+          </Link>
+        </div>
       </main>
       
       <footer className="mt-16 py-8 border-t border-gray-200 dark:border-gray-800">
