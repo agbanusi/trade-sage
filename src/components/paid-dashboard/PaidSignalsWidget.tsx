@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -25,20 +25,15 @@ export const PaidSignalsWidget: React.FC<PaidSignalsWidgetProps> = ({
   const [confidenceFilter, setConfidenceFilter] = useState<number>(0);
   const [timeframeFilter, setTimeframeFilter] = useState<string>('ALL');
   
-  // Filter signals
   const filteredSignals = signals
     .filter(signal => {
-      // Search filter
       const matchesSearch = searchQuery === '' || 
         signal.symbol.toLowerCase().includes(searchQuery.toLowerCase());
       
-      // Type filter
       const matchesType = filterType === 'ALL' || signal.type === filterType;
       
-      // Confidence filter
       const matchesConfidence = signal.confidence >= confidenceFilter;
       
-      // Timeframe filter
       const matchesTimeframe = timeframeFilter === 'ALL' || signal.timeframe === timeframeFilter;
       
       return matchesSearch && matchesType && matchesConfidence && matchesTimeframe;
@@ -215,9 +210,11 @@ const DetailedSignalRow = ({ signal }: { signal: TradingSignal }) => {
           </Badge>
         </div>
         
-        <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => toast.info("Detailed analysis would open")}>
-          <span>View Analysis</span>
-          <ExternalLinkIcon className="h-3.5 w-3.5" />
+        <Button variant="outline" size="sm" className="flex items-center gap-1" asChild>
+          <Link to={`/analysis/${signal.pairId}`}>
+            <span>View Analysis</span>
+            <ExternalLinkIcon className="h-3.5 w-3.5" />
+          </Link>
         </Button>
       </div>
       

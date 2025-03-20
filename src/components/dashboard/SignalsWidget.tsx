@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +47,9 @@ export const SignalsWidget: React.FC<SignalsWidgetProps> = ({ isPremium }) => {
               <p className="text-muted-foreground text-sm mb-4">
                 Get access to all trading signals, detailed analysis, and real-time alerts.
               </p>
-              <Button>Upgrade to Pro</Button>
+              <Button asChild>
+                <Link to="/paid-dashboard">Upgrade to Pro</Link>
+              </Button>
             </div>
           </div>
         </div>
