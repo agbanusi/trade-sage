@@ -29,7 +29,8 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const widgetRef = useRef<any>(null);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const widgetContainerRef = useRef<HTMLDivElement | null>(null);
 
   const timeframeToInterval = (tf: string): string => {
     switch (tf) {
@@ -44,9 +45,9 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   };
 
   const initTradingViewWidget = () => {
-    if (!window.TradingView) return;
+    if (!window.TradingView || !containerRef.current) return;
     
-    // Clear previous widget if it exists
+    // Clear previous widget container by setting innerHTML
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
     }
@@ -57,42 +58,48 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
     
     if (containerRef.current) {
       containerRef.current.appendChild(widgetContainer);
+      widgetContainerRef.current = widgetContainer;
       
       // Map timeframe to TradingView interval
       const interval = timeframeToInterval(timeframe);
       
-      // Create new widget
-      const widget = new window.TradingView.widget({
-        container_id: 'tradingview-widget-container',
-        symbol: symbol,
-        interval: interval,
-        timezone: 'Etc/UTC',
-        theme: 'dark',
-        style: '1',
-        locale: 'en',
-        toolbar_bg: '#f1f3f6',
-        enable_publishing: false,
-        hide_top_toolbar: false,
-        hide_legend: false,
-        save_image: false,
-        withdateranges: true,
-        allow_symbol_change: false,
-        studies: [
-          'MACD@tv-basicstudies',
-          'RSI@tv-basicstudies',
-          'BolingerBands@tv-basicstudies'
-        ],
-        height: isMobile ? 400 : 600,
-        width: '100%',
-        // Simplify UI for mobile
-        hide_side_toolbar: isMobile,
-        details: !isMobile,
-        hotlist: !isMobile,
-        calendar: !isMobile,
-      });
-      
-      // Store widget instance for cleanup
-      widgetRef.current = widget;
+      try {
+        // Create new widget
+        const widget = new window.TradingView.widget({
+          container_id: 'tradingview-widget-container',
+          symbol: symbol,
+          interval: interval,
+          timezone: 'Etc/UTC',
+          theme: 'dark',
+          style: '1',
+          locale: 'en',
+          toolbar_bg: '#f1f3f6',
+          enable_publishing: false,
+          hide_top_toolbar: false,
+          hide_legend: false,
+          save_image: false,
+          withdateranges: true,
+          allow_symbol_change: false,
+          studies: [
+            'MACD@tv-basicstudies',
+            'RSI@tv-basicstudies',
+            'BolingerBands@tv-basicstudies'
+          ],
+          height: isMobile ? 400 : 600,
+          width: '100%',
+          // Simplify UI for mobile
+          hide_side_toolbar: isMobile,
+          details: !isMobile,
+          hotlist: !isMobile,
+          calendar: !isMobile,
+        });
+        
+        // Store widget instance for cleanup
+        widgetRef.current = widget;
+      } catch (e) {
+        console.error("Error creating TradingView widget:", e);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -125,9 +132,10 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
 
     // Cleanup function
     return () => {
-      // Cleanup widget if it exists
+      // Safely cleanup widget
       if (widgetRef.current) {
         try {
+          // Some TradingView widgets might have a remove method
           if (typeof widgetRef.current.remove === 'function') {
             widgetRef.current.remove();
           }
@@ -137,12 +145,12 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         }
       }
 
-      // Safe cleanup of script element
-      if (scriptRef.current && scriptRef.current.parentNode) {
+      // Check if script removal is needed - only if we're the only component using it
+      if (scriptRef.current) {
         try {
-          // Only remove script if we created it (not if it's used by other components)
           const scriptInstances = document.querySelectorAll('script[src="https://s3.tradingview.com/tv.js"]');
-          if (scriptInstances.length <= 1) {
+          // Only remove if this might be the only instance
+          if (scriptInstances.length <= 1 && scriptRef.current.parentNode) {
             scriptRef.current.parentNode.removeChild(scriptRef.current);
           }
         } catch (e) {
@@ -151,21 +159,25 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         scriptRef.current = null;
       }
 
-      // Safe cleanup of container contents
+      // Safe clear of container contents
       if (containerRef.current) {
         try {
+          // Using innerHTML is safer than trying to remove child nodes directly
           containerRef.current.innerHTML = '';
         } catch (e) {
           console.log("Error clearing container:", e);
         }
       }
+
+      // Reset widget container ref
+      widgetContainerRef.current = null;
     };
   }, [symbol, timeframe]);
 
   return (
     <div 
       id="tradingview-chart-container" 
-      ref={el => containerRef.current = el} 
+      ref={containerRef} 
       className="h-full w-full overflow-hidden"
     >
       {isLoading && (
