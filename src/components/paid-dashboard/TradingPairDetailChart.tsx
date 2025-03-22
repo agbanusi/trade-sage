@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -26,26 +27,59 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [widgetInstance, setWidgetInstance] = useState<any>(null);
 
   useEffect(() => {
     setIsLoading(true);
-    // Load TradingView widget
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
+    let scriptElement: HTMLScriptElement | null = null;
+    let widgetContainer: HTMLDivElement | null = null;
+
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src="https://s3.tradingview.com/tv.js"]');
+    
+    if (existingScript) {
+      // Script already exists, initialize widget directly
       initTradingViewWidget();
       setIsLoading(false);
-    };
-    document.body.appendChild(script);
+    } else {
+      // Load TradingView widget
+      scriptElement = document.createElement('script');
+      scriptElement.src = 'https://s3.tradingview.com/tv.js';
+      scriptElement.async = true;
+      scriptElement.onload = () => {
+        initTradingViewWidget();
+        setIsLoading(false);
+      };
+      document.body.appendChild(scriptElement);
+    }
 
     return () => {
-      // Cleanup
-      document.getElementById('tradingview-widget-container')?.remove();
-      // Only remove the script if it exists
-      const scriptElement = document.querySelector('script[src="https://s3.tradingview.com/tv.js"]');
+      // Cleanup widget if it exists
+      if (widgetInstance) {
+        try {
+          // Some TradingView widgets have a cleanup method
+          if (widgetInstance.remove) {
+            widgetInstance.remove();
+          }
+        } catch (e) {
+          console.log("Error cleaning up widget:", e);
+        }
+      }
+
+      // Clean up container safely
+      const container = document.getElementById('tradingview-chart-container');
+      if (container) {
+        // Clear the container instead of removing it
+        container.innerHTML = '';
+      }
+
+      // Only remove the script if we created it and it still exists in the DOM
       if (scriptElement && scriptElement.parentNode) {
-        scriptElement.parentNode.removeChild(scriptElement);
+        try {
+          scriptElement.parentNode.removeChild(scriptElement);
+        } catch (e) {
+          console.log("Error removing script:", e);
+        }
       }
     };
   }, [symbol, timeframe]);
@@ -66,7 +100,7 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         const interval = timeframeToInterval(timeframe);
         
         // Create new widget
-        new window.TradingView.widget({
+        const widget = new window.TradingView.widget({
           container_id: 'tradingview-widget-container',
           symbol: symbol,
           interval: interval,
@@ -94,6 +128,9 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
           hotlist: !isMobile,
           calendar: !isMobile,
         });
+        
+        // Store widget instance for cleanup
+        setWidgetInstance(widget);
       }
     }
   };
