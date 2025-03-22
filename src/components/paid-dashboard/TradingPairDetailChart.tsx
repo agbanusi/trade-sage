@@ -30,7 +30,7 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   const widgetRef = useRef<any>(null);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const widgetContainerRef = useRef<HTMLDivElement | null>(null);
+  const widgetContainerId = `tradingview-widget-container-${symbol.replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const timeframeToInterval = (tf: string): string => {
     switch (tf) {
@@ -54,11 +54,10 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
     
     // Create new widget container
     const widgetContainer = document.createElement('div');
-    widgetContainer.id = 'tradingview-widget-container';
+    widgetContainer.id = widgetContainerId;
     
     if (containerRef.current) {
       containerRef.current.appendChild(widgetContainer);
-      widgetContainerRef.current = widgetContainer;
       
       // Map timeframe to TradingView interval
       const interval = timeframeToInterval(timeframe);
@@ -66,7 +65,7 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
       try {
         // Create new widget
         const widget = new window.TradingView.widget({
-          container_id: 'tradingview-widget-container',
+          container_id: widgetContainerId,
           symbol: symbol,
           interval: interval,
           timezone: 'Etc/UTC',
@@ -145,34 +144,21 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         }
       }
 
-      // Check if script removal is needed - only if we're the only component using it
-      if (scriptRef.current) {
-        try {
-          const scriptInstances = document.querySelectorAll('script[src="https://s3.tradingview.com/tv.js"]');
-          // Only remove if this might be the only instance
-          if (scriptInstances.length <= 1 && scriptRef.current.parentNode) {
-            scriptRef.current.parentNode.removeChild(scriptRef.current);
-          }
-        } catch (e) {
-          console.log("Error removing script:", e);
-        }
-        scriptRef.current = null;
-      }
-
       // Safe clear of container contents
       if (containerRef.current) {
         try {
-          // Using innerHTML is safer than trying to remove child nodes directly
           containerRef.current.innerHTML = '';
         } catch (e) {
           console.log("Error clearing container:", e);
         }
       }
 
-      // Reset widget container ref
-      widgetContainerRef.current = null;
+      // Check if script removal is needed - only if we're the only component using it
+      // We'll avoid removing the script as it might be used by other instances
+      // This prevents the 'removeChild' error when multiple charts exist
+      scriptRef.current = null;
     };
-  }, [symbol, timeframe]);
+  }, [symbol, timeframe, widgetContainerId]);
 
   return (
     <div 
