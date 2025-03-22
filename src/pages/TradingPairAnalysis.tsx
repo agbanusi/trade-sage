@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -106,6 +107,7 @@ const TradingPairAnalysis = () => {
             </div>
             <div className="h-[500px] w-full">
               <TradingPairDetailChart 
+                key={`${selectedSignal.symbol}-${selectedTimeframe}`}
                 symbol={selectedSignal.symbol} 
                 timeframe={selectedTimeframe}
               />

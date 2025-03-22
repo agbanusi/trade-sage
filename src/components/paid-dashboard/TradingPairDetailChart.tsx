@@ -30,7 +30,7 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   const widgetRef = useRef<any>(null);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const widgetContainerId = `tradingview-widget-container-${symbol.replace(/[^a-zA-Z0-9]/g, '')}`;
+  const widgetContainerId = `tradingview-widget-container-${symbol.replace(/[^a-zA-Z0-9]/g, '')}-${timeframe}`;
 
   const timeframeToInterval = (tf: string): string => {
     switch (tf) {
@@ -153,9 +153,8 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         }
       }
 
-      // Check if script removal is needed - only if we're the only component using it
-      // We'll avoid removing the script as it might be used by other instances
-      // This prevents the 'removeChild' error when multiple charts exist
+      // We deliberately do not remove the script from the DOM
+      // as it might be used by other instances of this component
       scriptRef.current = null;
     };
   }, [symbol, timeframe, widgetContainerId]);
