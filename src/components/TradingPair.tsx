@@ -5,6 +5,9 @@ import { generateMockPriceData } from '../utils/mockData';
 import { Card } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface TradingPairProps {
   pair: TradingPairType;
@@ -94,6 +97,15 @@ export const TradingPair: React.FC<TradingPairProps> = ({ pair, onClick, selecte
               </LineChart>
             </ResponsiveContainer>
           )}
+        </div>
+
+        <div className="mt-3 pt-2 border-t flex justify-end">
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/analysis/${pair.id}`}>
+              <ExternalLink className="h-3.5 w-3.5 mr-1" />
+              Full Analysis
+            </Link>
+          </Button>
         </div>
       </div>
       

@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import PaidDashboard from "./pages/PaidDashboard";
 import TradingPairAnalysis from "./pages/TradingPairAnalysis";
+import SubscriptionManagement from "./pages/SubscriptionManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/paid-dashboard" element={<PaidDashboard />} />
           <Route path="/analysis/:pairId" element={<TradingPairAnalysis />} />
+          <Route path="/subscription" element={<SubscriptionManagement />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
