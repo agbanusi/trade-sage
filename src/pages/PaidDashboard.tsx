@@ -23,6 +23,9 @@ import {
   CrosshairIcon,
   CalendarIcon,
   BookmarkIcon,
+  ChevronRight,
+  X,
+  Menu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -38,6 +41,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarHeader, 
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarInset,
+  SidebarTrigger
+} from '@/components/ui/sidebar';
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetTrigger,
+  SheetClose
+} from '@/components/ui/sheet';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { 
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from "@/components/ui/collapsible";
+import { useIsMobile } from '@/hooks/use-mobile';
 import { PaidTradingPairsWidget } from '@/components/paid-dashboard/PaidTradingPairsWidget';
 import { PaidSignalsWidget } from '@/components/paid-dashboard/PaidSignalsWidget';
 import { AdvancedAnalyticsWidget } from '@/components/paid-dashboard/AdvancedAnalyticsWidget';
@@ -57,6 +89,10 @@ const PaidDashboard = () => {
   const [chartLoaded, setChartLoaded] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [notificationSounds, setNotificationSounds] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   // Simulate chart loading
   useEffect(() => {
@@ -78,12 +114,149 @@ const PaidDashboard = () => {
     toast.info(`Timeframe changed to ${timeframe}`);
   };
 
+  const mockNotifications = [
+    {
+      id: 1,
+      title: "EURUSD Signal",
+      description: "New buy signal detected with 78% confidence",
+      time: "2 minutes ago",
+      read: false
+    },
+    {
+      id: 2,
+      title: "Pattern Detected",
+      description: "Head and Shoulders pattern forming on GBPUSD",
+      time: "15 minutes ago",
+      read: false
+    },
+    {
+      id: 3,
+      title: "Price Alert",
+      description: "XAUUSD reached your target price of $1,950",
+      time: "1 hour ago",
+      read: true
+    },
+    {
+      id: 4,
+      title: "Market Update",
+      description: "US CPI data released, markets showing high volatility",
+      time: "3 hours ago",
+      read: true
+    },
+    {
+      id: 5,
+      title: "Signal Completed",
+      description: "USDJPY sell signal hit take profit target",
+      time: "Yesterday",
+      read: true
+    }
+  ];
+
+  const unreadCount = mockNotifications.filter(n => !n.read).length;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <div className="w-72 h-screen bg-background/95 backdrop-blur-sm border-r border-gray-200 dark:border-gray-800 fixed">
-          <div className="p-6">
+    <SidebarProvider defaultOpen={!isMobile}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 flex w-full overflow-hidden">
+        {/* Mobile Menu Trigger */}
+        <div className="md:hidden fixed top-4 left-4 z-50">
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </div>
+
+        {/* Mobile Sidebar */}
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetContent side="left" className="p-0 w-72">
+            <div className="h-full flex flex-col bg-background">
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="h-9 w-9 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-white font-display font-bold text-sm">TS</span>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-medium font-display">TradeSage</h2>
+                      <Badge className="bg-primary/20 text-primary hover:bg-primary/30 mt-1">PRO</Badge>
+                    </div>
+                  </div>
+                  <SheetClose asChild>
+                    <Button variant="ghost" size="icon">
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </SheetClose>
+                </div>
+                
+                <Separator className="my-6" />
+                
+                <nav className="space-y-1">
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}>
+                    <HomeIcon className="mr-2 h-5 w-5" />
+                    Dashboard Overview
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('signals'); setMobileMenuOpen(false); }}>
+                    <LineChartIcon className="mr-2 h-5 w-5" />
+                    Advanced Signals
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('chart'); setMobileMenuOpen(false); }}>
+                    <BarChart3Icon className="mr-2 h-5 w-5" />
+                    Live Chart Analysis
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('patterns'); setMobileMenuOpen(false); }}>
+                    <CrosshairIcon className="mr-2 h-5 w-5" />
+                    Pattern Recognition
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('analytics'); setMobileMenuOpen(false); }}>
+                    <BrainIcon className="mr-2 h-5 w-5" />
+                    Advanced Analytics
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('indicators'); setMobileMenuOpen(false); }}>
+                    <GaugeIcon className="mr-2 h-5 w-5" />
+                    Indicator Settings
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('notifications'); setMobileMenuOpen(false); }}>
+                    <BellIcon className="mr-2 h-5 w-5" />
+                    Notification Center
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('calendar'); setMobileMenuOpen(false); }}>
+                    <CalendarIcon className="mr-2 h-5 w-5" />
+                    Economic Calendar
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('saved'); setMobileMenuOpen(false); }}>
+                    <BookmarkIcon className="mr-2 h-5 w-5" />
+                    Saved Setups
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}>
+                    <Settings2Icon className="mr-2 h-5 w-5" />
+                    Account Settings
+                  </Button>
+                </nav>
+              </div>
+              
+              <div className="mt-auto p-6 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">Premium Account</div>
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Active</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mb-2">
+                    Next billing: June 15, 2023
+                  </div>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/dashboard">
+                      <LogOutIcon className="mr-2 h-4 w-4" />
+                      Switch to Basic
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* Desktop Sidebar */}
+        <Sidebar side="left" className="hidden md:flex border-r border-gray-200 dark:border-gray-800">
+          <SidebarHeader className="p-6">
             <div className="flex items-center gap-2">
               <div className="h-9 w-9 bg-primary rounded-full flex items-center justify-center">
                 <span className="text-white font-display font-bold text-sm">TS</span>
@@ -93,54 +266,74 @@ const PaidDashboard = () => {
                 <Badge className="bg-primary/20 text-primary hover:bg-primary/30 mt-1">PRO</Badge>
               </div>
             </div>
-            
-            <Separator className="my-6" />
-            
-            <nav className="space-y-1">
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('overview')}>
-                <HomeIcon className="mr-2 h-5 w-5" />
-                Dashboard Overview
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('signals')}>
-                <LineChartIcon className="mr-2 h-5 w-5" />
-                Advanced Signals
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('chart')}>
-                <BarChart3Icon className="mr-2 h-5 w-5" />
-                Live Chart Analysis
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('patterns')}>
-                <CrosshairIcon className="mr-2 h-5 w-5" />
-                Pattern Recognition
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('analytics')}>
-                <BrainIcon className="mr-2 h-5 w-5" />
-                Advanced Analytics
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('indicators')}>
-                <GaugeIcon className="mr-2 h-5 w-5" />
-                Indicator Settings
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('notifications')}>
-                <BellIcon className="mr-2 h-5 w-5" />
-                Notification Center
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('calendar')}>
-                <CalendarIcon className="mr-2 h-5 w-5" />
-                Economic Calendar
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('saved')}>
-                <BookmarkIcon className="mr-2 h-5 w-5" />
-                Saved Setups
-              </Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveTab('settings')}>
-                <Settings2Icon className="mr-2 h-5 w-5" />
-                Account Settings
-              </Button>
-            </nav>
-          </div>
+          </SidebarHeader>
           
-          <div className="absolute bottom-0 w-full p-6 border-t border-gray-200 dark:border-gray-800">
+          <SidebarContent className="py-2 px-3">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'overview'} onClick={() => setActiveTab('overview')} tooltip="Dashboard Overview">
+                  <HomeIcon className="h-5 w-5" />
+                  <span>Dashboard Overview</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'signals'} onClick={() => setActiveTab('signals')} tooltip="Advanced Signals">
+                  <LineChartIcon className="h-5 w-5" />
+                  <span>Advanced Signals</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'chart'} onClick={() => setActiveTab('chart')} tooltip="Live Chart Analysis">
+                  <BarChart3Icon className="h-5 w-5" />
+                  <span>Live Chart Analysis</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'patterns'} onClick={() => setActiveTab('patterns')} tooltip="Pattern Recognition">
+                  <CrosshairIcon className="h-5 w-5" />
+                  <span>Pattern Recognition</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} tooltip="Advanced Analytics">
+                  <BrainIcon className="h-5 w-5" />
+                  <span>Advanced Analytics</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'indicators'} onClick={() => setActiveTab('indicators')} tooltip="Indicator Settings">
+                  <GaugeIcon className="h-5 w-5" />
+                  <span>Indicator Settings</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} tooltip="Notification Center">
+                  <BellIcon className="h-5 w-5" />
+                  <span>Notification Center</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} tooltip="Economic Calendar">
+                  <CalendarIcon className="h-5 w-5" />
+                  <span>Economic Calendar</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'saved'} onClick={() => setActiveTab('saved')} tooltip="Saved Setups">
+                  <BookmarkIcon className="h-5 w-5" />
+                  <span>Saved Setups</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'settings'} onClick={() => setActiveTab('settings')} tooltip="Account Settings">
+                  <Settings2Icon className="h-5 w-5" />
+                  <span>Account Settings</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+          
+          <SidebarFooter className="mt-auto border-t border-gray-200 dark:border-gray-800 p-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">Premium Account</div>
@@ -156,14 +349,17 @@ const PaidDashboard = () => {
                 </Link>
               </Button>
             </div>
-          </div>
-        </div>
+          </SidebarFooter>
+        </Sidebar>
 
         {/* Main content */}
-        <div className="pl-72 w-full">
+        <SidebarInset className="flex-1">
           <header className="border-b border-gray-200 dark:border-gray-800 bg-background/95 backdrop-blur-sm px-8 py-4 sticky top-0 z-10">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-medium font-display">Pro Dashboard</h1>
+              <div className="flex items-center gap-4">
+                <SidebarTrigger className="hidden md:flex" />
+                <h1 className="text-2xl font-medium font-display">Pro Dashboard</h1>
+              </div>
               <div className="flex items-center gap-4">
                 <div className="flex gap-2">
                   {(['1m', '5m', '15m', '1h', '4h', '1d'] as TimeFrame[]).map((tf) => (
@@ -177,14 +373,54 @@ const PaidDashboard = () => {
                     </Button>
                   ))}
                 </div>
-                <div className="relative">
-                  <Button variant="ghost" size="icon" onClick={() => toast.info("Notifications viewed")}>
-                    <BellIcon className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] flex items-center justify-center text-white">
-                      5
-                    </span>
-                  </Button>
-                </div>
+                
+                {/* Notifications Dropdown */}
+                <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <BellIcon className="h-5 w-5" />
+                      {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] flex items-center justify-center text-white">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-0" align="end">
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+                      <h4 className="font-medium">Notifications</h4>
+                      <Button variant="ghost" size="sm" className="text-xs h-7">Mark all as read</Button>
+                    </div>
+                    <ScrollArea className="h-[300px]">
+                      <div className="py-2">
+                        {mockNotifications.map((notification) => (
+                          <div 
+                            key={notification.id} 
+                            className={cn(
+                              "px-4 py-3 hover:bg-accent transition-colors cursor-pointer",
+                              !notification.read && "bg-primary/5"
+                            )}
+                            onClick={() => toast.info(`Viewed notification: ${notification.title}`)}
+                          >
+                            <div className="flex justify-between items-start">
+                              <h5 className="font-medium text-sm">{notification.title}</h5>
+                              <span className="text-xs text-muted-foreground">{notification.time}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                    <div className="p-2 border-t border-gray-200 dark:border-gray-800">
+                      <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => {
+                        setActiveTab('notifications');
+                        setNotificationsOpen(false);
+                      }}>
+                        View all notifications
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </header>
@@ -274,6 +510,9 @@ const PaidDashboard = () => {
                       </Select>
                       <Button variant="outline" size="sm" onClick={() => toast.info("Chart refreshed")}>
                         Refresh
+                      </Button>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to="/analysis/eurusd">Full Analysis</Link>
                       </Button>
                     </div>
                   </div>
@@ -1083,9 +1322,9 @@ const PaidDashboard = () => {
               </TabsContent>
             </Tabs>
           </main>
-        </div>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
