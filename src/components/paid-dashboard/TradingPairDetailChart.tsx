@@ -31,6 +31,9 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetContainerId = `tradingview-widget-container-${symbol.replace(/[^a-zA-Z0-9]/g, '')}-${timeframe}`;
+  
+  // Store widget element reference for safer cleanup
+  const widgetElementRef = useRef<HTMLDivElement | null>(null);
 
   const timeframeToInterval = (tf: string): string => {
     switch (tf) {
@@ -47,22 +50,25 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
   const initTradingViewWidget = () => {
     if (!window.TradingView || !containerRef.current) return;
     
-    // Clear previous widget container by setting innerHTML
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-    }
-    
-    // Create new widget container
-    const widgetContainer = document.createElement('div');
-    widgetContainer.id = widgetContainerId;
-    
-    if (containerRef.current) {
-      containerRef.current.appendChild(widgetContainer);
+    try {
+      // Clear previous widget container contents
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
       
-      // Map timeframe to TradingView interval
-      const interval = timeframeToInterval(timeframe);
+      // Create new widget container
+      const widgetContainer = document.createElement('div');
+      widgetContainer.id = widgetContainerId;
       
-      try {
+      if (containerRef.current) {
+        containerRef.current.appendChild(widgetContainer);
+        
+        // Store reference to the widget element for safer cleanup
+        widgetElementRef.current = widgetContainer;
+        
+        // Map timeframe to TradingView interval
+        const interval = timeframeToInterval(timeframe);
+        
         // Create new widget
         const widget = new window.TradingView.widget({
           container_id: widgetContainerId,
@@ -95,16 +101,19 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
         
         // Store widget instance for cleanup
         widgetRef.current = widget;
-      } catch (e) {
-        console.error("Error creating TradingView widget:", e);
-        setIsLoading(false);
       }
+    } catch (e) {
+      console.error("Error creating TradingView widget:", e);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     // Function to load script
     const loadScript = () => {
+      // Reset loading state for component remounts
+      setIsLoading(true);
+      
       // Check if script already exists
       const existingScript = document.querySelector('script[src="https://s3.tradingview.com/tv.js"]');
       
@@ -126,25 +135,22 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
       }
     };
 
-    setIsLoading(true);
     loadScript();
 
     // Cleanup function
     return () => {
-      // Safely cleanup widget
+      // Safely cleanup widget by first nullifying the remove method
       if (widgetRef.current) {
         try {
-          // Some TradingView widgets might have a remove method
-          if (typeof widgetRef.current.remove === 'function') {
-            widgetRef.current.remove();
-          }
+          // Instead of calling remove(), which can cause DOM issues,
+          // we'll clean up our references and let React handle the DOM
           widgetRef.current = null;
         } catch (e) {
-          console.log("Error cleaning up widget:", e);
+          console.log("Error cleaning up widget reference:", e);
         }
       }
 
-      // Safe clear of container contents
+      // Safe clear of container contents - don't try to manipulate specific elements
       if (containerRef.current) {
         try {
           containerRef.current.innerHTML = '';
@@ -152,6 +158,9 @@ export const TradingPairDetailChart: React.FC<TradingPairDetailChartProps> = ({
           console.log("Error clearing container:", e);
         }
       }
+
+      // Clear widget element reference
+      widgetElementRef.current = null;
 
       // We deliberately do not remove the script from the DOM
       // as it might be used by other instances of this component
