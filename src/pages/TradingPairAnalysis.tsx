@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -72,7 +71,7 @@ const TradingPairAnalysis = () => {
               Back to Dashboard
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">{selectedSignal.symbol}</h1>
+          <h1 className="text-3xl font-bold">{selectedSignal?.symbol}</h1>
           <Badge className="text-sm px-3 py-1">
             Premium Analysis
           </Badge>
@@ -106,17 +105,19 @@ const TradingPairAnalysis = () => {
               </div>
             </div>
             <div className="h-[500px] w-full">
-              <TradingPairDetailChart 
-                key={`${selectedSignal.symbol}-${selectedTimeframe}`}
-                symbol={selectedSignal.symbol} 
-                timeframe={selectedTimeframe}
-              />
+              {selectedSignal && (
+                <TradingPairDetailChart 
+                  key={`${selectedSignal.symbol}-${selectedTimeframe}-${Date.now()}`}
+                  symbol={selectedSignal.symbol} 
+                  timeframe={selectedTimeframe}
+                />
+              )}
             </div>
           </Card>
         </div>
         
         <div className="space-y-6">
-          <SignalDetailPanel signal={selectedSignal} />
+          {selectedSignal && <SignalDetailPanel signal={selectedSignal} />}
         </div>
       </div>
       
