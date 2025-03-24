@@ -107,7 +107,7 @@ const TradingPairAnalysis = () => {
             <div className="h-[500px] w-full">
               {selectedSignal && (
                 <TradingPairDetailChart 
-                  key={`${selectedSignal.symbol}-${selectedTimeframe}-${Date.now()}`}
+                  key={`${selectedSignal.symbol}-${selectedTimeframe}`}
                   symbol={selectedSignal.symbol} 
                   timeframe={selectedTimeframe}
                 />
