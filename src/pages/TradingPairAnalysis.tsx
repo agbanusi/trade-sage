@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -17,6 +18,8 @@ const TradingPairAnalysis = () => {
   const [selectedSignal, setSelectedSignal] = useState<TradingSignal | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('1h');
   const [isLoading, setIsLoading] = useState(true);
+  // Add a chart key to force remount when timeframe changes
+  const [chartKey, setChartKey] = useState(Date.now().toString());
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,6 +32,11 @@ const TradingPairAnalysis = () => {
     
     return () => clearTimeout(timer);
   }, [pairId]);
+
+  // Force chart remount when timeframe changes
+  useEffect(() => {
+    setChartKey(Date.now().toString());
+  }, [selectedTimeframe]);
 
   if (isLoading) {
     return (
@@ -107,7 +115,7 @@ const TradingPairAnalysis = () => {
             <div className="h-[500px] w-full">
               {selectedSignal && (
                 <TradingPairDetailChart 
-                  key={`${selectedSignal.symbol}-${selectedTimeframe}`}
+                  key={`${chartKey}-${selectedSignal.symbol}-${selectedTimeframe}`}
                   symbol={selectedSignal.symbol} 
                   timeframe={selectedTimeframe}
                 />
