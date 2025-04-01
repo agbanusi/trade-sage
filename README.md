@@ -4,52 +4,6 @@
 
 **URL**: https://lovable.dev/projects/ac2bd4f9-405e-483a-9623-5bef286d720e
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/ac2bd4f9-405e-483a-9623-5bef286d720e) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
 ## What technologies are used for this project?
 
 This project is built with .
@@ -60,10 +14,113 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/ac2bd4f9-405e-483a-9623-5bef286d720e) and click on Share -> Publish.
+# Trade Sage
 
-## I want to use a custom domain - is that possible?
+## Overview
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Trade Sage is an advanced trading analysis platform designed to help traders identify entry and exit points, receive AI-powered insights, and analyze market conditions. This backend provides a robust REST API that powers the Trade Sage application with features including technical analysis, trading signals, pattern recognition, economic calendar data, market sentiment analysis, and personalized trading setups.
+
+## Table of Contents
+
+- [Features](#features)
+- [API Documentation](#api-documentation)
+  - [Authentication](#authentication)
+  - [Core Analytics](#core-api)
+  - [Signals](#signals-api)
+  - [Insights](#insights-api)
+  - [Calendar](#calendar-api)
+  - [Setups](#setups-api)
+  - [Notifications](#notifications-api)
+  - [Dashboard](#dashboard-api)
+- [External Integrations](#external-integrations)
+- [Development](#development)
+
+## Features
+
+### Core Trading Features
+
+- **Trading Pairs Management**: Track and analyze numerous forex trading pairs
+- **User Accounts & Profiles**: Personalized trading preferences and settings
+- **Trade Management**: Record and analyze trading history
+
+### Technical Analysis
+
+- **Customizable Indicator Sets**: Create sets of weighted technical indicators for signal generation
+- **Backtesting Engine**: Test indicator performance on historical data
+- **Performance Analytics**: Win rate, profit factor, Sharpe ratio, and other metrics
+
+### Pattern Recognition
+
+- **Chart Pattern Detection**: Identify key patterns like Head & Shoulders, Double Tops/Bottoms, etc.
+- **Candlestick Patterns**: Recognize and interpret candlestick formations
+- **Trend Analysis**: Automated trend identification and analysis
+
+### AI-Powered Insights
+
+- **Trading Recommendations**: AI-generated entry/exit points with confidence scores
+- **Risk Assessment**: Stop loss and take profit recommendations with risk/reward analysis
+- **Market Analysis**: Contextual analysis of market conditions
+
+### Market Sentiment Analysis
+
+- **News Sentiment**: Analysis of financial news coverage for trading pairs
+- **Social Media Sentiment**: Monitoring of social media sentiment indicators
+- **Institutional Positioning**: Tracking of institutional investment positions
+- **Composite Sentiment**: Combined sentiment scores from multiple sources
+
+### Economic Calendar
+
+- **Economic Events Tracking**: Comprehensive calendar of market-moving economic releases
+- **Impact Analysis**: Rating system for event impact on specific currency pairs
+- **Customizable Alerts**: User-defined notification settings for important events
+
+### Trading Setups
+
+- **Custom Setup Creation**: Save personal trading strategies and setups
+- **Setup Sharing**: Community sharing of successful trading approaches
+- **Setup Categorization**: Organization by pattern type, timeframe, and strategy
+
+### Notifications System
+
+- **Signal Alerts**: Notifications for new trading signals
+- **Price Alerts**: Customizable price movement notifications
+- **Economic Calendar Alerts**: Reminders for upcoming economic events
+- **Multi-Channel Delivery**: Email and push notification support
+
+
+### Project Structure
+
+```
+trade_sage_backend/
+├── trade_sage_backend/        # Project package
+│   ├── core/                  # Core functionality
+│   ├── signals/               # Trading signals
+│   ├── insights/              # AI insights and analysis
+│   ├── calendar/              # Economic calendar
+│   ├── setups/                # Saved trading setups
+│   ├── notifications/         # Notifications system
+│   ├── settings.py            # Project settings
+│   ├── urls.py                # Main URL routing
+│   ├── celery.py              # Celery configuration
+│   └── wsgi.py                # WSGI configuration
+├── manage.py                  # Django management script
+└── requirements.txt           # Project dependencies
+```
+
+### Background Tasks
+
+Trade Sage uses Celery for background tasks:
+
+- Periodic backtesting of indicator sets
+- Economic calendar synchronization
+- Sentiment analysis updates
+- Price alert monitoring
+- Notification sending
+
+
+## License
+
+This project is proprietary and confidential. All rights reserved. This Project utilizes BUSL-1.1.
+
+For questions or support, contact: agbanusijohn@gmail.com
