@@ -19,7 +19,7 @@ This project is built with .
 
 ## Overview
 
-Trade Sage is an advanced trading analysis platform designed to help traders identify entry and exit points, receive AI-powered insights, and analyze market conditions. This backend provides a robust REST API that powers the Trade Sage application with features including technical analysis, trading signals, pattern recognition, economic calendar data, market sentiment analysis, and personalized trading setups.
+Trade Sage is an advanced, AI-powered trading analysis platform designed to give traders a competitive edge. It leverages a powerful REST API backend to deliver a suite of tools that help users identify optimal entry and exit points, analyze market conditions, and act on real-time insights. The platform combines technical analysis, trading signals, pattern recognition, and market sentiment data with economic calendar integration and personalized trading setups. With a modern, intuitive UI that puts actionable intelligence at the forefront, Trade Sage is built to disrupt traditional trading paradigms by empowering users with data-driven decision-making.
 
 ## Table of Contents
 
